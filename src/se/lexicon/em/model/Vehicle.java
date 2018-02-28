@@ -1,5 +1,5 @@
 package se.lexicon.em.model;
 
-public class Vehicle {
+public abstract class Vehicle {
 
 }
