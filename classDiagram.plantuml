@@ -1,56 +1,15 @@
 @startuml
 
-title LexiconGarage - Class Diagram
+' settings
+' --------------------------------------------
+skinparam classAttributeIconSize 0
 
-Package ui {
+title LexiconGarage - Class Diagram (WORK ONGOING)
 
-class UI 
-class Main
-}
-' --- end ui
+' define packages/namespaces and/or classes
+' --------------------------------------------
 
-Package se.lexicon.em.model {
-abstract class Vehicle {
-  -regNumber : String
-  -vehicleType : VehicleType
-  -numberOfWheels : int
-
-  +getNumnerOfWheels() : int
-  +getRegNumber() : String
-  
-
-}
-class Car
-class Bus
-class Motorcycle
-class Boat
-class Airplane
-
-
-
-Vehicle <|-- Car
-Vehicle <|-- Bus
-Vehicle <|-- Motorcycle
-Vehicle <|-- Boat
-Vehicle <|-- Airplane
-
-class Garage {
-  -location : String
-  -maxNoOfVehicles : int
-  
-  -parkedVehicles : ArrayList
-  
-  
-}
-
-Garage o-- Vehicle
-
-Garage <-down- UI
-
-} 
-' --- end model
-
-Package se.lexicon.em.utilities {
+namespace se.lexicon.em.utilities {
 enum VehicleType {
   UNKNOWN
   CAR
@@ -59,14 +18,120 @@ enum VehicleType {
   BOAT
   AIRPLANE
   BIKE
-} 
 }
-' --- end utilities
 
-Package se-lexicon.me.exceptions {
+enum ParkingStatusType {
+  UNKNOWN
+  PARKED
+  NOT_PARKED
+  ON_FIRE
+  }
+
+}
+' --- end namespace/package
+
+namespace ui {
+class Main
+class UI
+}
+' --- end namespace/package
+
+namespace se.lexicon.em.exceptions {
 class GarageFullException
 class VehicleNotFoundException
 }
-' -- end eceptions
+' --- end namespace/package
+
+namespace se.lexicon.em.model {
+
+' -- Classes
+class Garage {
+  -location : String
+  -maxNoOfParkedVehicles : int
+  -currentNoOfParkedVehicles : int
+  -vehicles : collection Vehicle
+
+  +listParkedVehicles() : void
+  +listParkedVehicleTypes() : void
+  +listKnownVehicles() : void  ???
+
+  +findVehicle(regNumber) : Vehicle
+  +parkVehicle(Vehicle) : boolean
+  +parkVehicle(regNumber) : boolean  ???
+  +unparkVehicle(RegNumber) : boolean
+  +setParkingStatus(RegNumber, status) : void ???
+
+}
+
+abstract class Vehicle {
+  -regNumber : String
+  -type : VehicleType
+  -model : String
+  -status : ParkingStatusType
+
+  {abstract} +toString() : String
+  +getRegNumber() : String
+  +getType() : VehicleType
+  +getModel() : String
+
+}
+
+class Car {
+  -numberOfSeats : int
+
+  +toString() : String
+  +getNumberOfSeats() : int
+}
+
+class Bus {
+  -numberofPassengers : int
+
+  +toString() : String
+  +getNumberOfPassengers() : int
+}
+
+class Motorcycle {
+  -cylinderVolume : int
+
+  +toString() : String
+  +getCylinderVolume() : int
+}
+
+class Boat {
+  -weight : int
+
+  +toString() : String
+  +getWeight() : int
+}
+
+class Airplane {
+ -numberOfPilots : int
+
+  +toString() : String
+  +getNumberOfPilots()
+}
+
+
+' -- Relations
+
+Vehicle <|-- Car
+Vehicle <|-- Bus
+Vehicle <|-- Motorcycle
+Vehicle <|-- Boat
+Vehicle <|-- Airplane
+
+Garage o-- Vehicle
+
+}
+' --- end namespace/package
+
+
+' define relations between packages/namespaces
+' --------------------------------------------
+
+se.lexicon.em.model.Garage <-down- ui.UI
+se.lexicon.em.model.Vehicle <-down- ui.UI  : ???
+' se.lexicon.em.utilities -- se.lexicon.em.model.Vehicle
+' se.lexicon.em.exceptions -up- se.lexicon.em.model
 
 @enduml
