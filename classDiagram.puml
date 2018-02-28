@@ -30,7 +30,7 @@ enum ParkingStatusType {
 }
 ' --- end namespace/package
 
-namespace ui {
+namespace se.lexicon.em.ui {
 class Main
 class UI
 }
@@ -129,8 +129,8 @@ Garage o-- Vehicle
 ' define relations between packages/namespaces
 ' --------------------------------------------
 
-se.lexicon.em.model.Garage <-down- ui.UI
-se.lexicon.em.model.Vehicle <-down- ui.UI  : ???
+se.lexicon.em.model.Garage <-down- se.lexicon.em.ui.UI
+se.lexicon.em.model.Vehicle <-down- se.lexicon.em.ui.UI  : ???
 ' se.lexicon.em.utilities -- se.lexicon.em.model.Vehicle
 ' se.lexicon.em.exceptions -up- se.lexicon.em.model
 
