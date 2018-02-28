@@ -1,0 +1,72 @@
+@startuml
+
+title LexiconGarage - Class Diagram
+
+Package ui {
+
+class UI 
+class Main
+}
+' --- end ui
+
+Package se.lexicon.em.model {
+abstract class Vehicle {
+  -regNumber : String
+  -vehicleType : VehicleType
+  -numberOfWheels : int
+
+  +getNumnerOfWheels() : int
+  +getRegNumber() : String
+  
+
+}
+class Car
+class Bus
+class Motorcycle
+class Boat
+class Airplane
+
+
+
+Vehicle <|-- Car
+Vehicle <|-- Bus
+Vehicle <|-- Motorcycle
+Vehicle <|-- Boat
+Vehicle <|-- Airplane
+
+class Garage {
+  -location : String
+  -maxNoOfVehicles : int
+  
+  -parkedVehicles : ArrayList
+  
+  
+}
+
+Garage o-- Vehicle
+
+Garage <-down- UI
+
+} 
+' --- end model
+
+Package se.lexicon.em.utilities {
+enum VehicleType {
+  UNKNOWN
+  CAR
+  BUS
+  MOTORCYCLE
+  BOAT
+  AIRPLANE
+  BIKE
+} 
+}
+' --- end utilities
+
+Package se-lexicon.me.exceptions {
+class GarageFullException
+class VehicleNotFoundException
+}
+' -- end eceptions
+
+@enduml
