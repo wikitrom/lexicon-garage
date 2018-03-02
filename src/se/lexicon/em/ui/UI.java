@@ -42,18 +42,16 @@ public class UI
 		// exception
 
 		//
-		int value = 0;
 		int selection;
 		Scanner sc = new Scanner(System.in); // .useDelimiter("\\s");
 
 		do
 		{
 			printMenu();
-			System.out.println("Enter a number and [RETURN]: ");
-			selection = sc.nextInt();
-
-			switch (selection)
-			{
+			// System.out.println("Enter a number and [RETURN]: ");
+			// selection = sc.nextInt();
+			selection = askForAnInteger("Enter a number and [RETURN]: ");
+			switch (selection) {
 			case 0:
 				// noting more to do, quit method
 				break;
@@ -77,10 +75,7 @@ public class UI
 				listParkedVehicleTypes();
 				break;
 			case 6:
-
-				// TODO:
-				System.out.println("(9) Find vehicle");
-				findParkedVehicle();
+				findVehicle();
 				break;
 			case 10:
 				// TODO: maybe a secret cmd ... remove!
@@ -195,8 +190,6 @@ public class UI
 		System.out.println("> Park vehicle");
 		System.out.println("  ============");
 
-		VehicleType type;
-
 		// check that we have a garage and that it is not already full
 		if (garage == null)
 		{
@@ -244,7 +237,6 @@ public class UI
 						+ "No space for your vehicle.");
 				return;
 			}
-			System.out.println("DEBUG: " + e.toString());
 			System.out.println();
 			System.out.println("To be able to park we need to register your vehicle.");
 			registerAndParkNewVehicle(regNo);
@@ -259,6 +251,11 @@ public class UI
 
 		// FIX: regNo should be string.
 		int regNo;
+
+		if (garage == null) {
+			System.out.println("No garage has been built, no vehicles to handle.");
+			return;
+		}
 
 		regNo = askForAnInteger("What is the registration number?\nSyntax: <number>");
 
@@ -281,10 +278,7 @@ public class UI
 				System.out.println("A vehicle with registration number \'" + regNo + "\' is registered \n"
 						+ "in this garage but not parked here.");
 			}
-		}
-		catch (VehicleNotFoundException e)
-		{
-			System.out.println("DEBUG: " + e.toString());
+		} catch (VehicleNotFoundException e) {
 			System.out.println();
 			System.out.println("No vehicle with registration numer " + regNo + " has ever parked in this garage.");
 			System.out.println("Please check the registration number you have provided.");
@@ -307,18 +301,22 @@ public class UI
 		System.out.println("> List all parked vehicles");
 		System.out.println("  ========================");
 
+		if (garage == null) {
+			System.out.println("No garage has been built, no vehicles to show.");
+			return;
+		}
+
 		Vehicle[] vArray = garage.getVehicleArray();
 
 		// TODO: each vehicle type should have a toString() that prints all
 		// data, not
 		// only the type specific data.
-		for (int count = 0; count < vArray.length; count++)
-		{
-			if (vArray[count] != null)
-			{
-				if (vArray[count].getStatus() == ParkingStatusType.PARKED)
-				{
-					System.out.println(vArray[count].toString());
+		for (int count = 0; count < vArray.length; count++) {
+			if (vArray[count] != null) {
+				if (vArray[count].getStatus() == ParkingStatusType.PARKED) {
+					System.out.println(vArray[count].toString() + " " + "[model=" + vArray[count].getModel() + "] "
+							+ "[regNo=" + vArray[count].getRegNumber() + "] " + "[status=" + vArray[count].getStatus()
+							+ "]");
 				}
 			}
 		}
@@ -339,6 +337,11 @@ public class UI
 		System.out.println();
 		System.out.println("> List number of parked vehicles per type");
 		System.out.println("  =======================================");
+
+		if (garage == null) {
+			System.out.println("No garage has been built, no vehicles to show.");
+			return;
+		}
 
 		Vehicle[] vArray = garage.getVehicleArray();
 		VehicleType type;
@@ -388,33 +391,145 @@ public class UI
 		System.out.println();
 	}
 
-	/*
-	 * pseudo code: 1. ask for what to search for
-	 * 
-	 * 2. call garage methods and print result.
-	 */
-	// System.out.println("Find a vehicle, maybe different search properties.");
-	private void findParkedVehicle()
-	{
-		Vehicle tVehicle;
-		System.out.println("Input regestration number:");
-		Scanner sc = new Scanner(System.in);
-		int regNumber = sc.nextInt();
-		try
-		{
-			tVehicle= garage.findVehicles(regNumber);
-			System.out.println("This Regestraion number" + tVehicle.getRegNumber() + " :is found");
+	private void findVehicle() {
+
+		/*
+		 * pseudo code:
+		 * 
+		 * 1. ask for what to search for
+		 * 
+		 * 2. fetch array of all parked vehicles
+		 * 
+		 * 3. loop through array searching for specified parameter
+		 * 
+		 */
+
+		// TODO: This method ought to be broken down into multiple helper methods,
+		// maybe put in the Garage class
+
+		Vehicle[] vArray;
+		int selection;
+
+		System.out.println();
+		System.out.println("> Find a vehicle");
+		System.out.println("  ==============");
+
+		if (garage == null) {
+			System.out.println("No garage has been built, no vehicles to search for.");
+			return;
 		}
-		catch (VehicleNotFoundException e)
-		{
-			System.out.println("The vehicles not found");
+		printFindMenu();
+		selection = askForAnInteger("Enter a number and [RETURN]: ");
+		switch (selection) {
+
+		case 1: // regNo
+			System.out.println();
+			int regNo = askForAnInteger("Enter the registration number");
+			Vehicle aVehicle;
+			try {
+				aVehicle = garage.findVehicles(regNo); // using existing method in Garage class, YES!
+				System.out.println("Vehicle found:");
+				System.out.println(aVehicle.toString() + " " + "[model=" + aVehicle.getModel() + "] " + "[regNo="
+						+ aVehicle.getRegNumber() + "] " + "[status=" + aVehicle.getStatus() + "]");
+			} catch (Exception e) {
+				System.out.println("No vehicle with registration number " + regNo + " found.");
+			}
+			break;
+
+		case 2: // model
+			int modelCount = 0;
+			System.out.println();
+			String model = askForAString("Enter a model");
+			// TODO: The loop should preferably by in a separate method, maybe in Garage
+			// class
+			vArray = garage.getVehicleArray();
+			for (int count = 0; count < vArray.length; count++) {
+				if (vArray[count] != null) {
+					if (vArray[count].getModel().matches(".*" + model.trim() + ".*")) {
+						System.out.println(vArray[count].toString() + " " + "[model=" + vArray[count].getModel() + "] "
+								+ "[regNo=" + vArray[count].getRegNumber() + "] " + "[status="
+								+ vArray[count].getStatus() + "]");
+						modelCount++;
+					}
+				}
+			}
+			System.out.println();
+			System.out.println("Number of found vehicles: " + modelCount);
+
+			break;
+
+		case 3: // vehicle type
+			int typeCount = 0;
+			System.out.println();
+			String vehicleType = askForAString("Enter a vehicle type");
+
+			// TODO: The loop should preferably by in a separate method, maybe in Garage
+			// class
+			vArray = garage.getVehicleArray();
+			for (int count = 0; count < vArray.length; count++) {
+				if (vArray[count] != null) {
+					if (vArray[count].getType().toString().matches(vehicleType.toUpperCase().trim())) {
+						System.out.println(vArray[count].toString() + " " + "[model=" + vArray[count].getModel() + "] "
+								+ "[regNo=" + vArray[count].getRegNumber() + "] " + "[status="
+								+ vArray[count].getStatus() + "]");
+						typeCount++;
+					}
+				}
+			}
+			System.out.println();
+			System.out.println("Number of found vehicles: " + typeCount);
+
+			break;
+
+		case 4: // number of seats - Cars
+			int seatCount = 0;
+			System.out.println();
+			int noOfSeats = askForAnInteger("How many seats do the vehicle have");
+
+			// TODO: The loop should preferably by in a separate method, maybe in Garage
+			// class
+			vArray = garage.getVehicleArray();
+			Car thisVehicle;
+
+			for (int count = 0; count < vArray.length; count++) {
+				if (vArray[count] != null) {
+					if (vArray[count].getType().toString().equals("CAR")) {
+						thisVehicle = (Car) vArray[count];
+						if (thisVehicle.getNumberOfSeats() == noOfSeats) {
+							System.out.println(vArray[count].toString() + " " + "[model=" + vArray[count].getModel()
+									+ "] " + "[regNo=" + vArray[count].getRegNumber() + "] " + "[status="
+									+ vArray[count].getStatus() + "]");
+							seatCount++;
+						}
+					}
+				}
+			}
+			System.out.println();
+			System.out.println("Number of found vehicles: " + seatCount);
+
+			break;
+		case 5: // weight - Boat
+			System.out.println("Search option not yet supported.");
+			break;
+		case 6: // number of passengers - Bus
+			System.out.println("Search option not yet supported.");
+			break;
+		case 7: // cylinder volume - Motorcycle
+			System.out.println("Search option not yet supported.");
+			break;
+
+		default:
+			System.out.println();
+			System.out.println("Please enter a valid number!");
+			System.out.println();
+			break;
 		}
+
+		System.out.println();
+
 	}
 
-	// private Helper methods
-	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-	private void registerAndParkNewVehicle(int regNo)
-	{ // FIX: String regNo
+	private void registerAndParkNewVehicle(int regNo) { // FIX: String regNo
 
 		// ask for common vehicle data
 		VehicleType type;
@@ -450,12 +565,12 @@ public class UI
 			aVehicle = new Motorcycle(regNo, model, type, cylinderVolume);
 			break;
 
+		// TODO: ADD more types
 		case "UNKNOWN":
 			System.out.println("Sorry, we can not park vehicles of unknown type.");
 			return;
 		default:
 			break;
-		// TODO: ADD more types
 		}
 
 		// if new vehicle instantiated, add to garage
@@ -479,9 +594,11 @@ public class UI
 		aVehicle = null; // free up for re-use for next parking
 	}
 
-	private VehicleType askForVehicleType()
-	{
-		Scanner sc = new Scanner(System.in).useDelimiter("\\s");
+	// private Helper methods
+	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+	private VehicleType askForVehicleType() {
+		Scanner sc = new Scanner(System.in).useDelimiter("\\s"); // closed in init()
 		String type;
 
 		System.out.println(
@@ -490,9 +607,7 @@ public class UI
 		System.out.println("Syntax: <write one type only>");
 
 		type = sc.next().toLowerCase();
-
-		switch (type)
-		{
+		switch (type) {
 		case "car":
 			return VehicleType.CAR;
 		case "bus":
@@ -509,8 +624,16 @@ public class UI
 		}
 	}
 
-	private int askForAnInteger(String displayText)
-	{
+	/**
+	 * Helper function that read a number from stdin and return it to caller.
+	 * 
+	 * *** Not robust, will throw exception if non-number entered
+	 * 
+	 * @param displayText
+	 *            Text to display on stdout
+	 * @return int
+	 */
+	private int askForAnInteger(String displayText) {
 
 		Scanner sc = new Scanner(System.in).useDelimiter("\\s"); // closed in
 																	// init()
@@ -523,8 +646,14 @@ public class UI
 		return input;
 	}
 
-	private String askForAString(String displayText)
-	{
+	/**
+	 * Helper function that reads a string from stdin and returns it to caller.
+	 * 
+	 * @param displayText
+	 *            Text to display on stdout
+	 * @return String
+	 */
+	private String askForAString(String displayText) {
 
 		Scanner sc = new Scanner(System.in).useDelimiter("\n"); // closed in
 																// init()
@@ -553,6 +682,21 @@ public class UI
 		sb.append("(4) List parked vehicles\n");
 		sb.append("(5) List parked vehicle Types\n");
 		sb.append("(6) Find vehicle\n");
+		System.out.println(sb);
+	}
+
+	private void printFindMenu() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("\n");
+		sb.append("What do you want to us as search parameter?");
+		sb.append("\n");
+		sb.append("(1) Registration number\n");
+		sb.append("(2) Model\n");
+		sb.append("(3) Vehical type\n");
+		sb.append("(4) Number of seats\n");
+		sb.append("(5) Weight (TODO: Not implemented)\n");
+		sb.append("(6) Number of passengers (TODO: Not implemented)\n");
+		sb.append("(7) Cylinder Volume (TODO: Not implemented)\n");
 		System.out.println(sb);
 	}
 
