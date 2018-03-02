@@ -15,7 +15,6 @@ public abstract class Vehicle
 		this.regNumber = regNumber;
 		this.model = model;
 		this.type = type;
-		
 
 	}
 
@@ -34,13 +33,20 @@ public abstract class Vehicle
 		return type;
 	}
 
+	public ParkingStatusType getStatus()
+	{
+		return status;
+	}
+
+	public void setStatus(ParkingStatusType status)
+	{		
+		this.status = status;
+	}
+
 	@Override
 	public String toString()
 	{
 		return "Vehicle [regNumber=" + regNumber + ", model=" + model + ", type=" + type + ", status=" + status + "]";
 	}
-	
-	
-	
 
 }

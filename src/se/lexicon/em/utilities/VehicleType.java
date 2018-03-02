@@ -1,5 +1,7 @@
 package se.lexicon.em.utilities;
 
+
 public enum VehicleType {
-	UNKNOWN, CAR, MOTORCYCLE, BUS, BOAT,AIRPLAN
+	UNKNOWN, CAR, MOTORCYCLE, BUS, BOAT,AIRPLAN;
+
 }
