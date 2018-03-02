@@ -24,7 +24,6 @@ enum ParkingStatusType {
   UNKNOWN
   PARKED
   NOT_PARKED
-  ON_FIRE
   }
 
 }
@@ -48,12 +47,13 @@ namespace se.lexicon.em.model {
 class Garage {
   -location : String
   -maxNoOfParkedVehicles : int
+  -noOfRegisteredVehicles : int
   -currentNoOfParkedVehicles : int
   -vehicles : collection Vehicle
 
   +listParkedVehicles() : void
   +listParkedVehicleTypes() : void
-  +listKnownVehicles() : void  ???
+ <strike> +listKnownVehicles() : void  ??? </strike>
 
   +findVehicle(regNumber) : Vehicle
   +isGarageFull() : boolean
@@ -65,12 +65,12 @@ class Garage {
 }
 
 abstract class Vehicle {
-  -regNumber : String
+  -regNumber : int
   -type : VehicleType
   -model : String
   -status : ParkingStatusType
 
-  {abstract} +toString() : String
+  {abstract} +toString() : String (abstract method)
   +getRegNumber() : String
   +getType() : VehicleType
   +getModel() : String
