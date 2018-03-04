@@ -162,7 +162,6 @@ public class UI {
 		 *
 		 * 0. check if garage has space left
 		 *
-		 *
 		 * 1. ask for registration number
 		 *
 		 * 2. check if vehicle already exist in the garage and has status=NOT_PARKED
@@ -170,7 +169,7 @@ public class UI {
 		 * 3. if it exist just park it, i.e. set parking status=PARKED
 		 *
 		 * 4. If it does not exist instantiate a new vehicle of specified type and park
-		 * it i the garage, i.e. call parkVehicle(vehicle);
+		 * it i the garage, i.e. call addVehicle(vehicle);
 		 */
 		System.out.println();
 		System.out.println("> Park vehicle");
@@ -398,7 +397,7 @@ public class UI {
 		 *
 		 * 2. fetch array of all parked vehicles
 		 *
-		 * 3. loop through array searching for specified parameter
+		 * 3. loop through array searching for specified property.
 		 *
 		 */
 
@@ -578,7 +577,7 @@ public class UI {
 			// FIX: handle this in a better way...
 			System.out.println();
 			System.out.println(
-					"*** FAILED to add new vihicle of unsupported type " + type.toString() + " to the garage!");
+					"*** FAILED to add new vihicle of type " + type.toString() + " to the garage!");
 			return;
 		}
 		System.out.println("Your vehicle of type" + type.toString().toLowerCase() + " has been parked in the garage.");
@@ -591,6 +590,9 @@ public class UI {
 	// private Helper methods
 	// +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+	/**
+	 * Read string from stdin and return matching VehicleType.
+	 */
 	private VehicleType askForVehicleType() {
 		Scanner sc = new Scanner(System.in).useDelimiter("\\s"); // closed in init()
 		String type;
@@ -616,12 +618,12 @@ public class UI {
 		default:
 			return VehicleType.UNKNOWN;
 		}
-	}
+ 	}
 
 	/**
 	 * Helper function that read a number from stdin and return it to caller.
 	 *
-	 * *** Not robust, will throw exception if non-number entered
+	 * *** Not fully  robust, will return 0 (zero) if non-number entered.
 	 *
 	 * @param displayText
 	 *            Text to display on stdout
@@ -642,13 +644,6 @@ public class UI {
 			System.out.println("*** Bad data! Input must be a number. Will asume 0 entered. :-)");
 			input = 0;
 		}
-
-		// try {
-		// input = sc.nextInt();
-		// } catch (Exception e) {
-		// System.out.println("Only numbers are allowed. Value set to 0 (zero).");
-		// input = 0;
-		// }
 
 		return input;
 	}
@@ -691,7 +686,9 @@ public class UI {
 		sb.append("(7) Find vehicle\n");
 		System.out.println(sb);
 	}
-
+	/**
+	 * Prints out find/search menu
+	 */
 	private void printFindMenu() {
 		StringBuilder sb = new StringBuilder();
 		sb.append("\n");

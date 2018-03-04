@@ -17,7 +17,6 @@ enum VehicleType {
   MOTORCYCLE
   BOAT
   AIRPLANE
-  BIKE
 }
 
 enum ParkingStatusType {
@@ -30,8 +29,22 @@ enum ParkingStatusType {
 ' --- end namespace/package
 
 namespace se.lexicon.em.ui {
-class Main
-class UI
+class Main {
+  +main() : void
+}
+class UI {
+  -garage : Garage
+
+  -buildNewGarage() : void
+  -parkNewVehicle() : void
+  -unparkVehicle() : void
+  -listParkedVehicles() : void
+  -listParkedVehicleTypes() : void
+  -listRegisteredVehicles() : void
+  -findVehicle() : void
+  +init() : void  (control loop)
+}
+
 }
 ' --- end namespace/package
 
@@ -51,16 +64,16 @@ class Garage {
   -currentNoOfParkedVehicles : int
   -vehicles : collection Vehicle
 
-  +listParkedVehicles() : void
-  +listParkedVehicleTypes() : void
- <strike> +listKnownVehicles() : void  ??? </strike>
-
+  '+listParkedVehicles() : void ???
+  '+listParkedVehicleTypes() : void ???
+  '+listKnownVehicles() : void  ???
+  +addVehicle(Vehicle) : void
+  +unparkVehicle(RegNumber) : boolean
   +findVehicle(regNumber) : Vehicle
   +isGarageFull() : boolean
-  +parkVehicle(Vehicle) : boolean
-  +parkVehicle(regNumber) : boolean  ???
-  +unparkVehicle(RegNumber) : boolean
-  +setParkingStatus(RegNumber, status) : void ???
+  +canTackeMoreCustomers() : boolean
+  +setParkingStatus(status, RegNumber) : void ???
+  +setParkingStatus(aVehicle,  status) : void
 
 }
 
@@ -111,7 +124,8 @@ class Airplane {
   +toString() : String
   +getNumberOfPilots()
 }
-
+note "Defined but\nnot used." as N1
+N1 .. Airplane
 
 ' -- Relations
 
@@ -119,7 +133,7 @@ Vehicle <|-- Car
 Vehicle <|-- Bus
 Vehicle <|-- Motorcycle
 Vehicle <|-- Boat
-Vehicle <|-- Airplane
+Vehicle <|.. Airplane
 
 Garage o-- Vehicle
 
@@ -130,8 +144,8 @@ Garage o-- Vehicle
 ' define relations between packages/namespaces
 ' --------------------------------------------
 
-se.lexicon.em.model.Garage <-down- se.lexicon.em.ui.UI
-se.lexicon.em.model.Vehicle <-down- se.lexicon.em.ui.UI  : ???
+se.lexicon.em.model.Garage <-down- se.lexicon.em.ui.UI  : park/unpark vehicle\nfind/list vehicles
+se.lexicon.em.model.Vehicle <-down- se.lexicon.em.ui.UI : create vehicle\nset/get vehicle data
 ' se.lexicon.em.utilities -- se.lexicon.em.model.Vehicle
 ' se.lexicon.em.exceptions -up- se.lexicon.em.model
 
