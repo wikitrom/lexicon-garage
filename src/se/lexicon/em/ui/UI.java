@@ -1,9 +1,7 @@
 package se.lexicon.em.ui;
 
-import java.util.InputMismatchException;
 import java.util.Scanner;
-import javax.print.attribute.standard.NumberOfDocuments;
-import se.lexicon.em.exceptions.GarageFullException;
+
 import se.lexicon.em.exceptions.VehicleNotFoundException;
 import se.lexicon.em.model.Boat;
 import se.lexicon.em.model.Bus;
@@ -17,7 +15,7 @@ import se.lexicon.em.utilities.VehicleType;
 /**
  * Class to handle input/output for the LexiconGarage application This is where
  * the control loop is located.
- * 
+ *
  * @author Mats and Ezeih
  */
 public class UI {
@@ -30,7 +28,7 @@ public class UI {
 
 	/**
 	 * Control loop
-	 * 
+	 *
 	 * @param none
 	 */
 	public void init() {
@@ -72,6 +70,10 @@ public class UI {
 				listParkedVehicleTypes();
 				break;
 			case 6:
+				// list all known/registered vehicles (not only the parked ones)
+				listRegisteredVehicles();
+				break;
+			case 7:
 				findVehicle();
 				break;
 			case 10:
@@ -157,16 +159,16 @@ public class UI {
 
 		/*
 		 * Psuedo code
-		 * 
+		 *
 		 * 0. check if garage has space left
-		 * 
-		 * 
+		 *
+		 *
 		 * 1. ask for registration number
-		 * 
+		 *
 		 * 2. check if vehicle already exist in the garage and has status=NOT_PARKED
-		 * 
+		 *
 		 * 3. if it exist just park it, i.e. set parking status=PARKED
-		 * 
+		 *
 		 * 4. If it does not exist instantiate a new vehicle of specified type and park
 		 * it i the garage, i.e. call parkVehicle(vehicle);
 		 */
@@ -189,7 +191,9 @@ public class UI {
 		// ask for registration number
 		// FIX: regNo should be string.
 		int regNo;
-		regNo = askForAnInteger("What is the registration number?\nSyntax: <number>");
+		do {
+			regNo = askForAnInteger("What is the registration number?\nSyntax: <number>");
+		} while (regNo == 0);
 
 		// check if vehicle is already known at the garage
 		try {
@@ -236,8 +240,7 @@ public class UI {
 		try {
 			aVehicle = garage.findVehicles(regNo);
 			// TODO: Perhaps it is better to let garage handle the unparking all
-			// together,
-			// use a 'public boolean unparkVehicle(regno);'
+			// together, i.e. update 'public boolean unparkVehicle(regno);'
 			if (aVehicle.getStatus() == ParkingStatusType.PARKED) {
 				// aVehicle.setStatus(ParkingStatusType.NOT_PARKED);
 				garage.unparkVehicle(regNo); // needed to decrement garage
@@ -260,9 +263,9 @@ public class UI {
 
 		/*
 		 * pseudo code:
-		 * 
+		 *
 		 * 1. fetch all vehicles from garage
-		 * 
+		 *
 		 * 2. loop over vehicles and print out each vehicle that has status = PARKED
 		 */
 		System.out.println();
@@ -294,11 +297,11 @@ public class UI {
 
 		/*
 		 * pseudo code:
-		 * 
+		 *
 		 * 1. fetch all vehicles from garage
-		 * 
+		 *
 		 * 2. loop over all parked vehicles and count how many of each type.
-		 * 
+		 *
 		 * 3. print out number of vehicles for each supported type
 		 */
 		System.out.println();
@@ -354,17 +357,49 @@ public class UI {
 		System.out.println();
 	}
 
+	private void listRegisteredVehicles() {
+
+		/*
+		 * pseudo code:
+		 *
+		 * 1. fetch all vehicles from garage
+		 *
+		 * 2. loop over vehicles and print out each vehicle
+		 */
+		System.out.println();
+		System.out.println("> List all registered/known vehicles");
+		System.out.println("  ==================================");
+
+		if (garage == null) {
+			System.out.println("No garage has been built, no vehicles to show.");
+			return;
+		}
+
+		Vehicle[] vArray = garage.getVehicleArray();
+
+		// TODO: each vehicle type should have a toString() that prints all
+		// data, not
+		// only the type specific data.
+		for (int count = 0; count < vArray.length; count++) {
+			if (vArray[count] != null) {
+				System.out.println(
+						vArray[count].toString() + " " + "[model=" + vArray[count].getModel() + "] " + "[regNo="
+								+ vArray[count].getRegNumber() + "] " + "[status=" + vArray[count].getStatus() + "]");
+			}
+		}
+	}
+
 	private void findVehicle() {
 
 		/*
 		 * pseudo code:
-		 * 
+		 *
 		 * 1. ask for what to search for
-		 * 
+		 *
 		 * 2. fetch array of all parked vehicles
-		 * 
+		 *
 		 * 3. loop through array searching for specified parameter
-		 * 
+		 *
 		 */
 
 		// TODO: This method ought to be broken down into multiple helper methods,
@@ -585,9 +620,9 @@ public class UI {
 
 	/**
 	 * Helper function that read a number from stdin and return it to caller.
-	 * 
+	 *
 	 * *** Not robust, will throw exception if non-number entered
-	 * 
+	 *
 	 * @param displayText
 	 *            Text to display on stdout
 	 * @return int
@@ -602,25 +637,25 @@ public class UI {
 
 		tmpInput = sc.next().trim();
 		if (tmpInput.matches("^[0-9]+")) {
-			input= Integer.parseInt(tmpInput);
+			input = Integer.parseInt(tmpInput);
 		} else {
 			System.out.println("*** Bad data! Input must be a number. Will asume 0 entered. :-)");
-			input = 0; 
+			input = 0;
 		}
 
-//		try {
-//			input = sc.nextInt();
-//		} catch (Exception e) {
-//			System.out.println("Only numbers are allowed. Value set to 0 (zero).");
-//			input = 0;
-//		}
+		// try {
+		// input = sc.nextInt();
+		// } catch (Exception e) {
+		// System.out.println("Only numbers are allowed. Value set to 0 (zero).");
+		// input = 0;
+		// }
 
 		return input;
 	}
 
 	/**
 	 * Helper function that reads a string from stdin and returns it to caller.
-	 * 
+	 *
 	 * @param displayText
 	 *            Text to display on stdout
 	 * @return String
@@ -651,8 +686,9 @@ public class UI {
 		sb.append("(2) Park vehicle\n");
 		sb.append("(3) Unpark vehicle\n");
 		sb.append("(4) List parked vehicles\n");
-		sb.append("(5) List parked vehicle Types\n");
-		sb.append("(6) Find vehicle\n");
+		sb.append("(5) List parked vehicle types\n");
+		sb.append("(6) List registered vehicles (parked and not parked)\n");
+		sb.append("(7) Find vehicle\n");
 		System.out.println(sb);
 	}
 
