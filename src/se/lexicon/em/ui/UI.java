@@ -442,7 +442,7 @@ public class UI {
 			vArray = garage.getVehicleArray();
 			for (int count = 0; count < vArray.length; count++) {
 				if (vArray[count] != null) {
-					if (vArray[count].getModel().matches(".*" + model.trim() + ".*")) {
+					if (vArray[count].getModel().toLowerCase().matches(".*" + model.trim().toLowerCase() + ".*")) {
 						System.out.println(vArray[count].toString() + " " + "[model=" + vArray[count].getModel() + "] "
 								+ "[regNo=" + vArray[count].getRegNumber() + "] " + "[status="
 								+ vArray[count].getStatus() + "]");
